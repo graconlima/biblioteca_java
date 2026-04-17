@@ -1,6 +1,6 @@
 package com.exemplo.biblioteca.model;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 public class Livro {

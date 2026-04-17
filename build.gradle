@@ -1,7 +1,12 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.5.6'
-	id 'io.spring.dependency-management' version '1.1.7'
+	//Java 8
+	id 'org.springframework.boot' version '2.7.18'
+	id 'io.spring.dependency-management' version '1.1.0'
+
+	//Java 17
+	//id 'org.springframework.boot' version '3.5.6' - Java 17
+	//id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.example'
@@ -10,15 +15,34 @@ description = 'Demo project for Spring Boot'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(8)//17
 	}
 }
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
+//Java 8
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // IMPORTANTE: Use a versão 1.x para Spring Boot 2.7
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
+    
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.h2database:h2'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+//Java 17
+/*dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -27,8 +51,16 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
+}*/
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group == 'org.junit.jupiter') {
+            details.useVersion '5.8.2'
+        }
+    }
 }
