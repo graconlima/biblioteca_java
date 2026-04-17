@@ -21,11 +21,22 @@ public class LivroController {
     @GetMapping
     public List<EntityModel<Livro>> listarLivros() {
         return livroRepository.findAll().stream()
-            .map(livro -> EntityModel.of(livro,
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LivroController.class).obterLivro(livro.getId())).withSelfRel(),
-                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(AutorController.class).obterAutor(livro.getAutor().getId())).withRel("autor")
-            ))
-            .collect(Collectors.toList());
+        .map(livro -> {
+            // Cria o modelo básico com o link para o próprio livro
+            EntityModel<Livro> model = EntityModel.of(livro,
+                WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LivroController.class).obterLivro(livro.getId())).withSelfRel()
+            );
+
+            // SÓ adiciona o link do autor se o autor não for nulo
+            if (livro.getAutor() != null && livro.getAutor().getId() != null) {
+                model.add(WebMvcLinkBuilder.linkTo(
+                    WebMvcLinkBuilder.methodOn(AutorController.class).obterAutor(livro.getAutor().getId())
+                ).withRel("autor"));
+            }
+
+            return model;
+        })
+	.collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
