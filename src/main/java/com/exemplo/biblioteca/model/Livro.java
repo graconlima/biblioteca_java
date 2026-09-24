@@ -1,5 +1,7 @@
 package com.exemplo.biblioteca.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +15,7 @@ public class Livro {
 
     @ManyToOne
     @JoinColumn(name = "autor_id")
+    @JsonIgnoreProperties("livros")
     private Autor autor;
 
     public Livro() {}

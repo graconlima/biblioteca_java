@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/autores")
+@CrossOrigin(origins = "*")
 public class AutorController {
 
     private final AutorRepository autorRepository;

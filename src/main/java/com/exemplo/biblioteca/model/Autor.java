@@ -3,6 +3,8 @@ package com.exemplo.biblioteca.model;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 public class Autor {
 
@@ -13,6 +15,7 @@ public class Autor {
     private String nome;
 
     @OneToMany(mappedBy = "autor", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("autor")
     private List<Livro> livros;
 
     public Autor() {}
