@@ -4,6 +4,7 @@ import com.exemplo.biblioteca.model.Livro;
 import com.exemplo.biblioteca.repository.LivroRepository;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,9 @@ public class LivroController {
         this.livroRepository = livroRepository;
     }
 
+    // Qualquer usuário autenticado (USER ou ADMIN) pode listar os livros
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<EntityModel<Livro>> listarLivros() {
         return livroRepository.findAll().stream()
             .map(livro -> EntityModel.of(livro,
@@ -29,7 +32,9 @@ public class LivroController {
             .collect(Collectors.toList());
     }
 
+    // Qualquer usuário autenticado (USER ou ADMIN) pode visualizar um livro específico
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public EntityModel<Livro> obterLivro(@PathVariable Long id) {
         Livro livro = livroRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
@@ -39,7 +44,9 @@ public class LivroController {
             WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(LivroController.class).listarLivros()).withRel("todos"));
     }
 
+    // Apenas usuários administradores (ADMIN) podem cadastrar novos livros
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Livro criarLivro(@RequestBody Livro livro) {
         return livroRepository.save(livro);
     }
